@@ -1,0 +1,21 @@
+type HelloResponse {
+  greeting: String!
+  timestamp: String!
+}
+
+type Book {
+  id: ID!
+  title: String!
+  authors: [String!]!
+  summaries: [String!]!
+}
+
+input RecommendationInput {
+  bookIds: [ID!]!
+  limit: Int
+}
+
+type Query {
+  hello: HelloResponse!
+  recommendations(input: RecommendationInput!): [Book!]!
+}
