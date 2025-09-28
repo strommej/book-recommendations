@@ -1,0 +1,8 @@
+FROM opensearchproject/opensearch:latest
+
+# Simple single-node setup with security disabled
+ENV discovery.type=single-node
+ENV DISABLE_SECURITY_PLUGIN=true
+
+# Expose OpenSearch ports
+EXPOSE 9200 9600
