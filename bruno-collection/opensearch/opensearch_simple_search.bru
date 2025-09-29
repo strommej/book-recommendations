@@ -1,0 +1,15 @@
+meta {
+  name: Search Books Simple
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{opensearchUrl}}/books/_search?size=100
+  body: json
+  auth: inherit
+}
+
+params:query {
+  size: 100
+}

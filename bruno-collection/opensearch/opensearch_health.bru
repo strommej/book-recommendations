@@ -1,0 +1,15 @@
+meta {
+  name: Check Cluster Health
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{opensearchUrl}}/_cluster/health
+  body: none
+  auth: none
+}
+
+params:query {
+  pretty: true
+}

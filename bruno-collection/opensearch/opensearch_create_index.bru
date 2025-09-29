@@ -1,0 +1,38 @@
+meta {
+  name: Create Books Index
+  type: http
+  seq: 10
+}
+
+put {
+  url: {{opensearchUrl}}/books
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: {{osUsername}}
+  password: {{osPassword}}
+}
+
+body:json {
+  {
+    "settings": {
+      "index": {
+        "knn": true
+      }
+    },
+    "mappings": {
+      "properties": {
+        "summaryEmbedding": {
+          "type": "knn_vector",
+          "dimension": 384,
+          "method": {
+            "name": "hnsw",
+            "space_type": "cosinesimil"
+          }
+        }
+      }
+    }
+  }
+}

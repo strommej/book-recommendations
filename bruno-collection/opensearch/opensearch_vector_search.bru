@@ -1,0 +1,34 @@
+meta {
+  name: Vector Search Books
+  type: http
+  seq: 13
+}
+
+post {
+  url: {{opensearchUrl}}/books/_search
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "size": 5,
+    "query": {
+      "knn": {
+        "embedding": {
+          "vector": [0.1, -0.2, 0.3, 0.4],
+          "k": 5
+        }
+      }
+    },
+    "_source": {
+      "excludes": ["embedding"]
+    }
+  }
+}
+
+docs {
+  This is a sample vector search query. 
+  Replace the "vector" array with actual embeddings from your book summaries.
+  The vector should have 384 dimensions to match the SentenceTransformer model.
+}
