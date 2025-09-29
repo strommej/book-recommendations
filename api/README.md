@@ -28,7 +28,7 @@ Use the Bruno collections in `bruno-collection/` to test and explore the API end
 - [Get Bruno](https://www.usebruno.com/downloads) if you don't have it 
 - Open Bruno and use "Open Collection" to bring in the `bruno-collection` folder
 - Set Bruno environment values for local and/or dev
-- Run queries and mutations to validate API functionality
+- Enjoy run queries and mutations
 
 
 ### 5. Get an idToken for Bruno (AWS Cognito)
