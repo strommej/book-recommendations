@@ -35,4 +35,5 @@ async function processBatch(batchSize: number) {
   }
 }
 
-processBatch(100);
+const batchSize = Number(process.argv[2]) || 100;
+processBatch(batchSize);

@@ -4,18 +4,23 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "buildApi": "cd ../../api && npm install && npm run build",
     "bootstrap:dev": "cdk bootstrap --context stage=dev --app 'npx tsx cdk.ts'",
-    "deploy:dev": "cdk deploy --context stage=dev --app 'npx tsx cdk.ts'",
+    "deploy:dev": "cdk deploy --context stage=dev --app 'npx tsx cdk.ts' && npm run initializeIndex:dev",
+    "initializeIndex:dev": "tsx initializeIndex.ts booksOpensearch-dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "tsx": "^4.20.6",
     "@types/node": "^24.5.2",
     "aws-cdk": "^2.1029.3",
     "aws-cdk-lib": "^2.217.0",
-    "constructs": "^10.4.2"
+    "constructs": "^10.4.2",
+    "tsx": "^4.20.6"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.896.0",
+    "@opensearch-project/opensearch": "^3.5.1"
+  }
 }

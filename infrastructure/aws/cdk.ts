@@ -9,6 +9,8 @@ import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
 
 export interface ProductRecommendationsStackProps extends cdk.StackProps {
   stage: 'dev' | 'prod';
+  opensearchUsername: string;
+  opensearchPassword: string;
 }
 
 export class ProductRecommendationsStack extends cdk.Stack {
@@ -40,8 +42,19 @@ export class ProductRecommendationsStack extends cdk.Stack {
       removalPolicy: isProd ? cdk.RemovalPolicy.RETAIN : cdk.RemovalPolicy.DESTROY,
     });
 
+    const opensearchPassword = new Secret(this, `OpenSearchMasterPassword-${props.stage}`, {
+      secretName: `booksOpensearchMasterPassword-${props.stage}`,
+      generateSecretString: {
+        secretStringTemplate: JSON.stringify({ username: 'admin' }),
+        generateStringKey: 'password',
+        excludePunctuation: false,
+        requireEachIncludedType: true,
+        passwordLength: 32,
+      },
+    });
+
     const opensearchDomain = new Domain(this, `OpenSearchDomain-${props.stage}`, {
-      version: EngineVersion.OPENSEARCH_2_11,
+      version: EngineVersion.OPENSEARCH_2_19,
       removalPolicy: isProd ? cdk.RemovalPolicy.RETAIN : cdk.RemovalPolicy.DESTROY,
       capacity: {
         dataNodeInstanceType: isProd ? 'm6g.large.search' : 't3.small.search',
@@ -51,11 +64,19 @@ export class ProductRecommendationsStack extends cdk.Stack {
       encryptionAtRest: { enabled: true },
       enforceHttps: true,
       fineGrainedAccessControl: {
-        masterUserName: 'admin',
+        masterUserName: opensearchPassword.secretValueFromJson('username').toString(),
+        masterUserPassword: opensearchPassword.secretValueFromJson('password'),
       },
     });
 
-    const opensearchSecret = Secret.fromSecretNameV2(this, 'OpenSearchSecret', `bookRecOpensearch-${props.stage}`);
+    const opensearchConnectionSecret = new Secret(this, `OpenSearchConnectionSecret-${props.stage}`, {
+      secretName: `booksOpensearch-${props.stage}`,
+      secretObjectValue: {
+        endpoint: cdk.SecretValue.unsafePlainText(`https://${opensearchDomain.domainEndpoint}`),
+        username: opensearchPassword.secretValueFromJson('username'),
+        password: opensearchPassword.secretValueFromJson('password'),
+      },
+    });
 
     const apiLambda = new Function(this, `ApiLambda-${props.stage}`, {
       runtime: Runtime.NODEJS_20_X,
@@ -64,10 +85,10 @@ export class ProductRecommendationsStack extends cdk.Stack {
       environment: {
         DYNAMO_TABLE: likesTable.tableName,
         OPENSEARCH_ENDPOINT: `https://${opensearchDomain.domainEndpoint}`,
-        // TODO: Opensearch access should be done via IAM roles
+        // TODO: Opensearch access should be handled with IAM roles
         // TODO: These should be fetched from Secrets Manager at runtime
-        OPENSEARCH_USERNAME: opensearchSecret.secretValueFromJson('username').toString(),
-        OPENSEARCH_PASSWORD: opensearchSecret.secretValueFromJson('password').toString(),
+        OPENSEARCH_USERNAME: 'admin',
+        OPENSEARCH_PASSWORD: opensearchDomain.masterUserPassword?.toString() || "",
         USER_POOL_ID: userPool.userPoolId,
         STAGE: props.stage,
       },
@@ -99,4 +120,10 @@ export class ProductRecommendationsStack extends cdk.Stack {
 
 const app = new cdk.App();
 const stage = app.node.tryGetContext('stage') || 'dev';
-new ProductRecommendationsStack(app, `ProductRecommendationsStack-${stage}`, { stage });
+const opensearchUsername = app.node.tryGetContext('opensearchUsername');
+const opensearchPassword = app.node.tryGetContext('opensearchPassword');
+new ProductRecommendationsStack(app, `ProductRecommendationsStack-${stage}`, {
+  stage,
+  opensearchUsername,
+  opensearchPassword,
+});

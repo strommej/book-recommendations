@@ -1,9 +1,14 @@
 import { Book } from './types.js';
 import { Client } from '@opensearch-project/opensearch';
 
-const OPENSEARCH_URL = process.env.OPENSEARCH_URL || 'http://localhost:9200';
+export const client = new Client({
+  node: process.env.OPENSEARCH_ENDPOINT || 'http://localhost:9200',
+  auth: process.env.OPENSEARCH_USERNAME && process.env.OPENSEARCH_PASSWORD ? {
+    username: process.env.OPENSEARCH_USERNAME,
+    password: process.env.OPENSEARCH_PASSWORD,
+  } : undefined,
+});
 const INDEX_NAME = process.env.OPENSEARCH_INDEX || 'books';
-const client = new Client({ node: OPENSEARCH_URL });
 
 export async function indexBooksToOpenSearch(books: Book[]): Promise<void> {
   if (!books.length) return;

@@ -4,8 +4,8 @@
   "description": "",
   "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npm run codegen && tsx watch src/server/devServer.ts",
+    "test": "vitest",
+    "dev": "npm run codegen && tsx watch -r dotenv/config src/server/devServer.ts",
     "codegen": "graphql-codegen --config codegen.yml",
     "codegen:watch": "graphql-codegen --config codegen.yml --watch",
     "compile": "tsc && tsc-alias",

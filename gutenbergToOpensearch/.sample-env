@@ -1,0 +1,4 @@
+DYNAMO_TABLE=your-user-likes-table
+OPENSEARCH_ENDPOINT=http://localhost:9200
+OPENSEARCH_PASSWORD=osPassword
+OPENSEARCH_USERNAME=osUsername
