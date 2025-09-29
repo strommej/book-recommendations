@@ -44,7 +44,7 @@ aws cognito-idp initiate-auth \
 Replace `<yourclientid>`, `<yourusername>`, and `<yourpassword>` with your actual Cognito app client ID and credentials.
 Your Cognito client id will output from the CDK deploy and you can use the AWS console to create a username and password for yourself. 
 
-The response will include an `IdToken` in the `AuthenticationResult`. Use this token in Bruno as the `idToken` in your dev bruno environment:
+The response will include an `IdToken` in the `AuthenticationResult`. Use the `IdToken` as the `idToken` in your Bruno dev environment.
 
 ## Notes
 See the main [README](../README.md) for project context and links to infrastructure and ETL modules.
