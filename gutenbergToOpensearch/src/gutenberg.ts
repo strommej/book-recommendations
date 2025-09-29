@@ -1,16 +1,16 @@
-import { Book } from "./types";
+import type { Book } from "./types";
 
 // Prefer UTF-8, then us-ascii, then any text/plain
 function getBestPlainTextUrl(formats: Record<string, string>): string | undefined {
   const keys = Object.keys(formats);
   // Most preferred
-  let url = keys.find(k => k.startsWith('text/plain') && k.includes('utf-8'));
+  let url = keys.find((k) => k.startsWith("text/plain") && k.includes("utf-8"));
   if (url) return formats[url];
   // Next preferred
-  url = keys.find(k => k.startsWith('text/plain') && k.includes('us-ascii'));
+  url = keys.find((k) => k.startsWith("text/plain") && k.includes("us-ascii"));
   if (url) return formats[url];
   // Any text/plain
-  url = keys.find(k => k.startsWith('text/plain'));
+  url = keys.find((k) => k.startsWith("text/plain"));
   if (url) return formats[url];
   return undefined;
 }
@@ -32,7 +32,7 @@ export async function fetchEnglishNovels(limit = 10): Promise<Book[]> {
           authors: book.authors.map((a: { name: string }) => a.name),
           downloadUrl: txtUrl,
           summaries: book.summaries,
-          fullText: ''
+          fullText: ""
         });
       }
       if (books.length >= limit) return books;

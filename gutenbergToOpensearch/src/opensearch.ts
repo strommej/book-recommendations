@@ -1,4 +1,4 @@
-import { Book } from "./types.js";
+import type { Book } from "./types.js";
 import { Client } from "@opensearch-project/opensearch";
 
 export const client = new Client({

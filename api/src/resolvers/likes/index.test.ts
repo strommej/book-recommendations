@@ -1,6 +1,5 @@
 import { vi, describe, it, expect, beforeEach } from "vitest";
 import { saveLike, likedBooks } from "./index.js";
-import { PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { dynamo } from "~/common/dynamo.js";
 
 vi.mock("~/common/dynamo.js", () => ({

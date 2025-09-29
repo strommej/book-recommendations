@@ -1,5 +1,5 @@
 import * as cdk from "aws-cdk-lib";
-import { Construct } from "constructs";
+import type { Construct } from "constructs";
 import { UserPool } from "aws-cdk-lib/aws-cognito";
 import { Table, AttributeType, BillingMode } from "aws-cdk-lib/aws-dynamodb";
 import { Domain, EngineVersion } from "aws-cdk-lib/aws-opensearchservice";

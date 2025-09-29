@@ -1,9 +1,5 @@
 import { openSearchClient } from "~/common/opensearch.js";
-import type {
-  Book,
-  QueryRecommendationsArgs,
-  QueryResolvers
-} from "~/types/__generated__/gqlTypes.js";
+import type { Book, QueryRecommendationsArgs } from "~/types/__generated__/gqlTypes.js";
 import { averageEmbeddings, getLikedEmbeddings } from "./utils.js";
 import { likedBooks } from "../likes/index.js";
 
