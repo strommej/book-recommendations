@@ -17,5 +17,5 @@ input RecommendationInput {
 
 type Query {
   hello: HelloResponse!
-  recommendations(input: RecommendationInput!): [Book!]!
+  recommendations(input: RecommendationInput!): [Book!]
 }

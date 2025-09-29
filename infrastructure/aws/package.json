@@ -1,0 +1,21 @@
+{
+  "name": "aws",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "bootstrap:dev": "cdk bootstrap --context stage=dev --app 'npx tsx cdk.ts'",
+    "deploy:dev": "cdk deploy --context stage=dev --app 'npx tsx cdk.ts'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tsx": "^4.20.6",
+    "@types/node": "^24.5.2",
+    "aws-cdk": "^2.1029.3",
+    "aws-cdk-lib": "^2.217.0",
+    "constructs": "^10.4.2"
+  },
+  "dependencies": {}
+}

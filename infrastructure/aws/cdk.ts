@@ -1,0 +1,102 @@
+import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import { UserPool } from 'aws-cdk-lib/aws-cognito';
+import { Table, AttributeType, BillingMode } from 'aws-cdk-lib/aws-dynamodb';
+import { Domain, EngineVersion } from 'aws-cdk-lib/aws-opensearchservice';
+import { Function, Runtime, Code } from 'aws-cdk-lib/aws-lambda';
+import { RestApi, LambdaIntegration, CognitoUserPoolsAuthorizer } from 'aws-cdk-lib/aws-apigateway';
+import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
+
+export interface ProductRecommendationsStackProps extends cdk.StackProps {
+  stage: 'dev' | 'prod';
+}
+
+export class ProductRecommendationsStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props: ProductRecommendationsStackProps) {
+    super(scope, id, props);
+    const isProd = props.stage === 'prod';
+
+    const userPool = new UserPool(this, `UserPool-${props.stage}`, {
+      selfSignUpEnabled: true,
+      signInAliases: { email: true },
+    });
+
+    const userPoolClient = userPool.addClient(`UserPoolClient-${props.stage}`, {
+      authFlows: {
+        userPassword: true,
+        adminUserPassword: true,
+      },
+      generateSecret: false,
+    });
+
+    const authorizer = new CognitoUserPoolsAuthorizer(this, `CognitoAuthorizer-${props.stage}`, {
+      cognitoUserPools: [userPool],
+    });
+
+    const likesTable = new Table(this, `LikesTable-${props.stage}`, {
+      partitionKey: { name: 'userId', type: AttributeType.STRING },
+      sortKey: { name: 'bookId', type: AttributeType.STRING },
+      billingMode: BillingMode.PAY_PER_REQUEST,
+      removalPolicy: isProd ? cdk.RemovalPolicy.RETAIN : cdk.RemovalPolicy.DESTROY,
+    });
+
+    const opensearchDomain = new Domain(this, `OpenSearchDomain-${props.stage}`, {
+      version: EngineVersion.OPENSEARCH_2_11,
+      removalPolicy: isProd ? cdk.RemovalPolicy.RETAIN : cdk.RemovalPolicy.DESTROY,
+      capacity: {
+        dataNodeInstanceType: isProd ? 'm6g.large.search' : 't3.small.search',
+        dataNodes: isProd ? 3 : 1,
+      },
+      nodeToNodeEncryption: true,
+      encryptionAtRest: { enabled: true },
+      enforceHttps: true,
+      fineGrainedAccessControl: {
+        masterUserName: 'admin',
+      },
+    });
+
+    const opensearchSecret = Secret.fromSecretNameV2(this, 'OpenSearchSecret', `bookRecOpensearch-${props.stage}`);
+
+    const apiLambda = new Function(this, `ApiLambda-${props.stage}`, {
+      runtime: Runtime.NODEJS_20_X,
+      handler: 'server/lambda.graphqlHandler',
+      code: Code.fromAsset('../../api/dist'), // Adjust path as needed
+      environment: {
+        DYNAMO_TABLE: likesTable.tableName,
+        OPENSEARCH_ENDPOINT: `https://${opensearchDomain.domainEndpoint}`,
+        // TODO: Opensearch access should be done via IAM roles
+        // TODO: These should be fetched from Secrets Manager at runtime
+        OPENSEARCH_USERNAME: opensearchSecret.secretValueFromJson('username').toString(),
+        OPENSEARCH_PASSWORD: opensearchSecret.secretValueFromJson('password').toString(),
+        USER_POOL_ID: userPool.userPoolId,
+        STAGE: props.stage,
+      },
+    });
+    likesTable.grantReadWriteData(apiLambda);
+    opensearchDomain.grantReadWrite(apiLambda);
+
+    const api = new RestApi(this, `ApiGateway-${props.stage}`, {
+      restApiName: `ProductRecommendationsApi-${props.stage}`,
+      description: `API for book recommendations (${props.stage})`,
+    });
+
+    api.root.addMethod('POST', new LambdaIntegration(apiLambda), {
+      authorizer,
+      authorizationType: cdk.aws_apigateway.AuthorizationType.COGNITO,
+    });
+
+    new cdk.CfnOutput(this, 'ApiEndpoint', {
+      value: api.url,
+      description: 'API Gateway endpoint URL',
+    });
+
+    new cdk.CfnOutput(this, 'CognitoAppClientId', {
+      value: userPoolClient.userPoolClientId,
+      description: 'Cognito App Client ID',
+    });
+  }
+}
+
+const app = new cdk.App();
+const stage = app.node.tryGetContext('stage') || 'dev';
+new ProductRecommendationsStack(app, `ProductRecommendationsStack-${stage}`, { stage });

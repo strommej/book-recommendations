@@ -2,14 +2,11 @@ import { startStandaloneServer } from '@apollo/server/standalone';
 import { createApolloServer } from './createServer.js';
 
 export async function startDevServer() {
-  // Create a fresh server instance for development
   const server = createApolloServer();
-
   const { url } = await startStandaloneServer(server, {
     listen: { port: 4000 },
     context: async ({ req }) => ({
       requestId: `dev-${Date.now()}`,
-      // Add your services here for development
     }),
   });
 

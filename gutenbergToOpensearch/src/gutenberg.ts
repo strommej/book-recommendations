@@ -29,7 +29,7 @@ export async function fetchEnglishNovels(limit = 10): Promise<Book[]> {
         books.push({
           id: book.id,
           title: book.title,
-          authors: book.authors,
+          authors: book.authors.map((a: { name: string }) => a.name),
           downloadUrl: txtUrl,
           summaries: book.summaries,
           fullText: ''
@@ -48,9 +48,3 @@ export async function fetchBookText(gutenbergTextUrl: string): Promise<string | 
   if (res.ok) return await res.text();
   return null;
 }
-
-// fetchEnglishNovels(5).then(books => {
-//   console.log(`Fetched ${books.length} English novels from Gutendex`);
-// }).catch(err => {
-//   console.error('Error fetching books:', err);
-// });

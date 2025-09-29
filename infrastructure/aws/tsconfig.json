@@ -11,17 +11,11 @@
     "outDir": "./dist",
     "rootDir": "./",
     "types": [
-      "node",
-      "vitest/globals"
-    ],
-    "paths": {
-      "~/*": [
-        "./*"
-      ]
-    }
+      "node"
+    ]
   },
   "include": [
-    "src/*.ts",
+    "*.ts"
   ],
   "exclude": [
     "node_modules",

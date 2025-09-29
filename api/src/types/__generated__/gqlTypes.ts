@@ -33,7 +33,7 @@ export type HelloResponse = {
 export type Query = {
   __typename?: 'Query';
   hello: HelloResponse;
-  recommendations: Array<Book>;
+  recommendations?: Maybe<Array<Book>>;
 };
 
 
@@ -156,7 +156,7 @@ export type HelloResponseResolvers<ContextType = any, ParentType extends Resolve
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   hello?: Resolver<ResolversTypes['HelloResponse'], ParentType, ContextType>;
-  recommendations?: Resolver<Array<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<QueryRecommendationsArgs, 'input'>>;
+  recommendations?: Resolver<Maybe<Array<ResolversTypes['Book']>>, ParentType, ContextType, RequireFields<QueryRecommendationsArgs, 'input'>>;
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{

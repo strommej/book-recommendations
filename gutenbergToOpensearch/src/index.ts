@@ -35,4 +35,4 @@ async function processBatch(batchSize: number) {
   }
 }
 
-processBatch(20);
+processBatch(100);
