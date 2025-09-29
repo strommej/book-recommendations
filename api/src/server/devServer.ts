@@ -1,5 +1,5 @@
-import { startStandaloneServer } from '@apollo/server/standalone';
-import { createApolloServer } from './createServer.js';
+import { startStandaloneServer } from "@apollo/server/standalone";
+import { createApolloServer } from "./createServer.js";
 
 export async function startDevServer() {
   const server = createApolloServer();
@@ -7,7 +7,8 @@ export async function startDevServer() {
     listen: { port: 4000 },
     context: async ({ req }) => ({
       requestId: `dev-${Date.now()}`,
-    }),
+      userId: "local-dev-user" // Mock userId for local development
+    })
   });
 
   console.log(`🚀 Apollo Server ready at ${url}`);
@@ -15,6 +16,6 @@ export async function startDevServer() {
 }
 
 startDevServer().catch((error) => {
-  console.error('Failed to start development server:', error);
+  console.error("Failed to start development server:", error);
   process.exit(1);
 });

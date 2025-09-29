@@ -1,11 +1,11 @@
-import { Book } from './types.js';
-import { pipeline } from '@xenova/transformers';
+import { Book } from "./types.js";
+import { pipeline } from "@xenova/transformers";
 
 let embedder: any;
 
 export async function vectorizeSummary(book: Book): Promise<number[]> {
   if (!embedder) {
-    embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+    embedder = await pipeline("feature-extraction", "Xenova/all-MiniLM-L6-v2");
   }
   function meanPool(output: number[][]): number[] {
     const dim = output[0].length;
@@ -13,12 +13,12 @@ export async function vectorizeSummary(book: Book): Promise<number[]> {
     for (const token of output) {
       for (let i = 0; i < dim; i++) sum[i] += token[i];
     }
-    return sum.map(v => v / output.length);
+    return sum.map((v) => v / output.length);
   }
-  const summaryText = book.summaries.length > 0 ? book.summaries[0] : '';
+  const summaryText = book.summaries.length > 0 ? book.summaries[0] : "";
   const summaryTensor = await embedder(summaryText);
   if (!summaryTensor || !summaryTensor.data || !summaryTensor.dims) {
-    console.error('Invalid tensor output:', summaryTensor);
+    console.error("Invalid tensor output:", summaryTensor);
     return [NaN];
   }
   const { data, dims } = summaryTensor;
@@ -30,9 +30,9 @@ export async function vectorizeSummary(book: Book): Promise<number[]> {
     tokens.push(Array.from(data.slice(i * embeddingDim, (i + 1) * embeddingDim)));
   }
   if (!tokens.length || !tokens[0].length) {
-    console.error('No valid tokens for mean pooling:', tokens);
+    console.error("No valid tokens for mean pooling:", tokens);
     return [NaN];
   }
   const summaryEmbedding = meanPool(tokens);
-  return summaryEmbedding
+  return summaryEmbedding;
 }

@@ -1,0 +1,10 @@
+{
+  "name": "book_recommendations",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@types/node": "^24.0.3"
+  }
+}

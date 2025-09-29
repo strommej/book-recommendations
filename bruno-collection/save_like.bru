@@ -1,0 +1,29 @@
+meta {
+  name: Save Like
+  type: graphql
+  seq: 3
+}
+
+post {
+  url: {{gqlEndpoint}}
+  body: graphql
+  auth: none
+}
+
+headers {
+  Authorization: {{idToken}}
+}
+
+body:graphql {
+  mutation SaveLike($input: SaveLikeInput!) {
+    saveLike(input: $input)
+  }
+}
+
+body:graphql:vars {
+  {
+    "input": {
+      "bookId": "example-book-id"
+    }
+  }
+}

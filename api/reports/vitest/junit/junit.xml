@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="9" failures="0" errors="0" time="0.008995291">
+    <testsuite name="src/resolvers/recommendations/index.test.ts" timestamp="2025-09-29T18:05:14.218Z" hostname="APPXPK9X0DBDE3" tests="6" failures="0" errors="0" skipped="0" time="0.00470025">
+        <testcase classname="src/resolvers/recommendations/index.test.ts" name="recommendations resolver &gt; returns recommendations excluding liked bookIds" time="0.002272375">
+        </testcase>
+        <testcase classname="src/resolvers/recommendations/index.test.ts" name="recommendations resolver &gt; falls back to likedBooks when bookIds is not provided" time="0.000551625">
+        </testcase>
+        <testcase classname="src/resolvers/recommendations/index.test.ts" name="recommendations resolver &gt; returns empty array if OpenSearch returns no hits" time="0.000175083">
+        </testcase>
+        <testcase classname="src/resolvers/recommendations/index.test.ts" name="recommendations resolver &gt; defaults to limit 5 if not provided" time="0.000123958">
+        </testcase>
+        <testcase classname="src/resolvers/recommendations/index.test.ts" name="recommendations resolver &gt; handles OpenSearch errors gracefully" time="0.000695667">
+        </testcase>
+        <testcase classname="src/resolvers/recommendations/index.test.ts" name="recommendations resolver &gt; must_not excludes all bookIds from results" time="0.000263583">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/resolvers/likes/index.test.ts" timestamp="2025-09-29T18:05:14.219Z" hostname="APPXPK9X0DBDE3" tests="3" failures="0" errors="0" skipped="0" time="0.004295041">
+        <testcase classname="src/resolvers/likes/index.test.ts" name="likes resolver &gt; saveLike writes to DynamoDB and returns true" time="0.002672167">
+        </testcase>
+        <testcase classname="src/resolvers/likes/index.test.ts" name="likes resolver &gt; likedBooks queries DynamoDB and returns mapped items" time="0.000759667">
+        </testcase>
+        <testcase classname="src/resolvers/likes/index.test.ts" name="likes resolver &gt; likedBooks returns empty array if no items" time="0.000159541">
+        </testcase>
+    </testsuite>
+</testsuites>

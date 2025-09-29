@@ -30,10 +30,33 @@ export type HelloResponse = {
   timestamp: Scalars['String']['output'];
 };
 
+export type Like = {
+  __typename?: 'Like';
+  bookId: Scalars['ID']['output'];
+  createdDate: Scalars['String']['output'];
+  userId: Scalars['ID']['output'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  saveLike: Scalars['Boolean']['output'];
+};
+
+
+export type MutationSaveLikeArgs = {
+  input: SaveLikeInput;
+};
+
 export type Query = {
   __typename?: 'Query';
   hello: HelloResponse;
+  likedBooks?: Maybe<Array<Like>>;
   recommendations?: Maybe<Array<Book>>;
+};
+
+
+export type QueryLikedBooksArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -42,8 +65,12 @@ export type QueryRecommendationsArgs = {
 };
 
 export type RecommendationInput = {
-  bookIds: Array<Scalars['ID']['input']>;
+  bookIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type SaveLikeInput = {
+  bookId: Scalars['ID']['input'];
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -125,8 +152,11 @@ export type ResolversTypes = ResolversObject<{
   HelloResponse: ResolverTypeWrapper<HelloResponse>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  Like: ResolverTypeWrapper<Like>;
+  Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
   RecommendationInput: RecommendationInput;
+  SaveLikeInput: SaveLikeInput;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
 }>;
 
@@ -137,8 +167,11 @@ export type ResolversParentTypes = ResolversObject<{
   HelloResponse: HelloResponse;
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
+  Like: Like;
+  Mutation: Record<PropertyKey, never>;
   Query: Record<PropertyKey, never>;
   RecommendationInput: RecommendationInput;
+  SaveLikeInput: SaveLikeInput;
   String: Scalars['String']['output'];
 }>;
 
@@ -154,14 +187,27 @@ export type HelloResponseResolvers<ContextType = any, ParentType extends Resolve
   timestamp?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 }>;
 
+export type LikeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Like'] = ResolversParentTypes['Like']> = ResolversObject<{
+  bookId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+}>;
+
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
+  saveLike?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSaveLikeArgs, 'input'>>;
+}>;
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   hello?: Resolver<ResolversTypes['HelloResponse'], ParentType, ContextType>;
+  likedBooks?: Resolver<Maybe<Array<ResolversTypes['Like']>>, ParentType, ContextType, Partial<QueryLikedBooksArgs>>;
   recommendations?: Resolver<Maybe<Array<ResolversTypes['Book']>>, ParentType, ContextType, RequireFields<QueryRecommendationsArgs, 'input'>>;
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{
   Book?: BookResolvers<ContextType>;
   HelloResponse?: HelloResponseResolvers<ContextType>;
+  Like?: LikeResolvers<ContextType>;
+  Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
 }>;
 

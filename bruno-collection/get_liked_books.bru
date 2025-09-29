@@ -1,0 +1,31 @@
+meta {
+  name: Get Liked Books
+  type: graphql
+  seq: 4
+}
+
+post {
+  url: {{gqlEndpoint}}
+  body: graphql
+  auth: none
+}
+
+headers {
+  Authorization: {{idToken}}
+}
+
+body:graphql {
+  query GetLikedBooks($limit: Int) {
+    likedBooks(limit: $limit) {
+      userId
+      bookId
+      createdDate
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "limit": 10
+  }
+}
